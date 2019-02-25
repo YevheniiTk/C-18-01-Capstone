@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using C_18_01_Capstone.API.Contract;
@@ -16,7 +17,7 @@ namespace C_18_01_Capstone.Web.Services
         private const string UrlEncodedContentType = "application/x-www-form-urlencoded";
 
         private readonly IConfigurationService configuration;
-        private Token token;
+        private static Token token;
 
         public bool IsAuthenticated
         {
@@ -67,6 +68,12 @@ namespace C_18_01_Capstone.Web.Services
         {
             using (var httpClient = new HttpClient())
             {
+                if (token != null)
+                {
+                    httpClient.DefaultRequestHeaders.Authorization =
+                        new AuthenticationHeaderValue(token.token_type, token.access_token);
+                }
+
                 var result = await httpClient
                         .GetAsync(CreateResourceUri(resource));
 
@@ -89,7 +96,7 @@ namespace C_18_01_Capstone.Web.Services
                 JsonContentType);
         }
 
-        public async void GetAndSroreToken(string login, string hashedPassword)
+        public async Task GetAndSroreToken(string login, string hashedPassword)
         {
             using (var httpClient = new HttpClient())
             {
@@ -103,8 +110,10 @@ namespace C_18_01_Capstone.Web.Services
                 {
                     token = JsonConvert.DeserializeObject<Token>(result);
                 }
-
-                throw new ApplicationException();
+                else
+                {
+                    throw new ApplicationException();
+                }
             }
         }
 
@@ -114,6 +123,11 @@ namespace C_18_01_Capstone.Web.Services
                parameters,
                Encoding.UTF8,
                UrlEncodedContentType);
+        }
+
+        public async Task<string> CheckAuthorizedRoute()
+        {
+            return await GetResourceAsync<string>("users/authRoute");
         }
     }
 }

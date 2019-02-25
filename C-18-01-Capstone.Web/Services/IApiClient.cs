@@ -16,8 +16,10 @@ namespace C_18_01_Capstone.Web.Services
 
         Task<IReadOnlyList<CountryApiModel>> GetCountries();
 
-        void GetAndSroreToken(string login, string hashPassword);
+        Task GetAndSroreToken(string login, string hashPassword);
 
         bool IsAuthenticated { get; }
+
+        Task<string> CheckAuthorizedRoute();
     }
 }

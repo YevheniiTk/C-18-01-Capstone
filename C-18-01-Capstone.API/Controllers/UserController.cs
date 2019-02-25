@@ -71,5 +71,13 @@ namespace C_18_01_Capstone.API.Controllers
 
             return this.Ok();
         }
+
+        [HttpGet]
+        [Route("authRoute")]
+        [Authorize]
+        public IHttpActionResult AuthorizedRoute()
+        {
+            return Ok("Authorizeed!!");
+        }
     }
 }

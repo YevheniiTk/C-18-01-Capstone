@@ -30,9 +30,12 @@ namespace C_18_01_Capstone.Web.Controllers
 
         [HttpGet]
         [AuthorizeUser]
-        public async Task<ActionResult> Index()
+        public async Task<ActionResult> Index(string login)
         {
-            return View();
+            string result = await this.apiClient.CheckAuthorizedRoute();
+            UserModel user = await apiClient.GetUser(login);
+
+            return View(user);
         }
 
         [HttpGet]
@@ -112,9 +115,9 @@ namespace C_18_01_Capstone.Web.Controllers
             string hashedPassword = encryptionService.EncryptPassword
                 (loginModel.Password, user.Salt);
 
-            apiClient.GetAndSroreToken(loginModel.Login, hashedPassword);
+            await apiClient.GetAndSroreToken(loginModel.Login, hashedPassword);
 
-            return RedirectToAction("Index");
+            return RedirectToAction("Index", new { login = loginModel.Login });
 
         }
 

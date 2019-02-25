@@ -194,6 +194,7 @@
     <Compile Include="Infrastructure\Filters\CustomActionAttribute.cs" />
     <Compile Include="Infrastructure\Filters\HandleExceptionAttribute.cs" />
     <Compile Include="Infrastructure\SimpleInjector\ImportPropertySelectionBehavior.cs" />
+    <Compile Include="Infrastructure\Token.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\ApiClient.cs" />
     <Compile Include="Services\ConfigurationService.cs" />

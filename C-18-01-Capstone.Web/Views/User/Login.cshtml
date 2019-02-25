@@ -21,7 +21,7 @@
         <div class="form-group">
             @Html.LabelFor(m => Model.Password, new { @class = "col-sm-3 control-label" })
             <div class="col-sm-9">
-                @Html.TextBoxFor(m => Model.Password, "", new { placeholder = "Password", @class = "form-control", autofocus = true })
+                @Html.TextBoxFor(m => Model.Password, "", new { placeholder = "Password", @class = "form-control", autofocus = true , @type="password"})
             </div>
             <div class="col-sm-6 col-sm-offset-3">
                 @Html.ValidationMessageFor(m => Model.Password, "", new { @class = "text-danger" })

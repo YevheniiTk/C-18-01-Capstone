@@ -9,6 +9,7 @@ using C_18_01_Capstone.Web.Services;
 using C_18_01_Capstone.Services.Services;
 using C_18_01_Capstone.Services;
 using C_18_01_Capstone.Web.Infrastructure.Filters;
+using C_18_01_Capstone.Web.Infrastructure;
 
 namespace C_18_01_Capstone.Web.Controllers
 {
@@ -111,19 +112,10 @@ namespace C_18_01_Capstone.Web.Controllers
             string hashedPassword = encryptionService.EncryptPassword
                 (loginModel.Password, user.Salt);
 
-            if (user.HashedPassword.Equals(hashedPassword,
-                StringComparison.Ordinal))
-            {
-                HttpContext.Session["Login"] = user.Login;
-                HttpContext.Session["HashedPassword"] = user.HashedPassword;
-                // do request for token
-                // store token in session
-                // in auth attribute, check token presence
-            }
-            else
-            {
-                throw new ApplicationException();
-            }
+            apiClient.GetAndSroreToken(loginModel.Login, hashedPassword);
+
+            return RedirectToAction("Index");
+
         }
 
         private async Task<IReadOnlyList<CountryViewModel>> 

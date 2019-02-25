@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using C_18_01_Capstone.API.Contract;
 using C_18_01_Capstone.Services;
+using C_18_01_Capstone.Web.Infrastructure;
 using Newtonsoft.Json;
 
 namespace C_18_01_Capstone.Web.Services
@@ -12,8 +13,18 @@ namespace C_18_01_Capstone.Web.Services
     public class ApiClient : IApiClient
     {
         private const string JsonContentType = "application/json";
+        private const string UrlEncodedContentType = "application/x-www-form-urlencoded";
 
         private readonly IConfigurationService configuration;
+        private Token token;
+
+        public bool IsAuthenticated
+        {
+            get
+            {
+                return token != null;
+            }
+        }
 
         public ApiClient(IConfigurationService configuration)
         {
@@ -76,6 +87,33 @@ namespace C_18_01_Capstone.Web.Services
                 JsonConvert.SerializeObject(user),
                 Encoding.UTF8,
                 JsonContentType);
+        }
+
+        public async void GetAndSroreToken(string login, string hashedPassword)
+        {
+            using (var httpClient = new HttpClient())
+            {
+                var content = (StringContent)CreateUrlEncodedApiRequest(
+                    $"grant_type=password&login={login}&hashedPassword={hashedPassword}");
+
+                HttpResponseMessage response = await httpClient.PostAsync(CreateResourceUri("token"), content);
+                string result = await response.Content.ReadAsStringAsync();
+
+                if (response.IsSuccessStatusCode)
+                {
+                    token = JsonConvert.DeserializeObject<Token>(result);
+                }
+
+                throw new ApplicationException();
+            }
+        }
+
+        private HttpContent CreateUrlEncodedApiRequest(string parameters)
+        {
+            return new StringContent(
+               parameters,
+               Encoding.UTF8,
+               UrlEncodedContentType);
         }
     }
 }
